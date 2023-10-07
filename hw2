@@ -1,0 +1,102 @@
+#include <algorithm>
+#include <climits>
+#include <chrono>
+#include <cstring>
+#include <iostream>
+#include <random>
+#include <vector>
+#include <string>
+
+template<typename T>
+void print_vector(std::vector<T> &list) {
+    for( std::string d : list) {
+        std::cout << num << "\n";
+    }
+    std::cout << std::endl;
+}
+
+void radixSortWithPattern(std::vector<std::string>& dates) {
+    // yyyy-mm-dd hh:mm:ss
+    const int maxLen = 19;
+
+    for (int pass = maxLen - 1; pass>= 0; --pass) {
+        std::vector<std::vector<std::string>> bucket(10);
+
+        for (std::string & timestamp : dates) {
+            int digit = (pass < timestamp.length()) ? (timestamp[pass] - '0') : 0;
+            bucket[digit].push_back(timestamp);
+        }
+
+        dates.clear();
+        for (std::vector<std::string> & b : bucket) {
+            dates.insert(dates.end(), b.begin(), b.end());
+        }
+    }
+
+}
+
+int genRandomInt(int min, int max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(min, max);
+    return dist(gen);
+}
+
+std::string generateRandomTimestamp() {
+    int year = genRandomInt(1900, 2023);
+    int month = genRandomInt(1, 12);
+    int day = genRandomInt(1, 31);
+    int hour = genRandomInt(0, 23);
+    int minute = genRandomInt(0, 59);
+    int second = genRandomInt(0, 59);
+
+    char buffer[20];
+    sprintf(buffer, "%04d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second);
+    return std::string(buffer);
+}
+
+int main(int argc, char **argv) {
+    if(argc != 2) {
+        std::cout << "random: must specify number" << std::endl;
+        return (404);
+    }
+    int number = atoi(argv[1]);
+
+    auto start{std::chrono::steady_clock::now()};
+    auto end{std::chrono::steady_clock::now()};
+
+
+    // initialization
+    start = std::chrono::steady_clock::now();
+    std::vector<std::string> dates(number);
+    for(int i = 0; i < number; ++i) {
+        dates[i] = generateRandomTimestamp();
+    }
+    auto dates2 = dates;
+    end = std::chrono::steady_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds_init{end - start};
+    std::cout << "Initialization time = " << elapsed_seconds_init.count() << "s\n";
+    print_vector(dates);
+
+
+    // std::sort
+    start = std::chrono::steady_clock::now();
+    std::sort(dates.begin(), dates.end());
+    end = std::chrono::steady_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds_sort{end - start};
+    std::cout << "std::sort time = " << elapsed_seconds_sort.count() << "s\n";
+
+
+    // radix sort
+    start = std::chrono::steady_clock::now();
+    radixSortWithPattern(dates2);
+    end = std::chrono::steady_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds_sort2{end - start};
+    std::cout << "radix sort time = " << elapsed_seconds_sort2.count() << "s\n";
+
+
+    return 0;
+}
