@@ -52,34 +52,26 @@ int main(int argc, char **argv) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> randint(1, 1000);
 
-    for (int iteration = 0; iteration < 2; ++iteration) {
-        std::vector<int> v;
-        for(int i = 0; i < number; ++i){    
-            int num =  randint(gen);
-            v.push_back(num);
-        }
-
-        auto start_recursive = std::chrono::high_resolution_clock::now();
-        int result_recursive = lis_recursive(v, v.size());
-        auto end_recursive = std::chrono::high_resolution_clock::now();
-
-        auto duration_recursive = std::chrono::duration_cast<std::chrono::nanoseconds>(end_recursive - start_recursive);
-        std::cout << "Time taken by recursive approach: " << duration_recursive.count() << " nanoseconds" << std::endl;
-
-        // Reset the vector for dynamic programming
-        v.clear();
-        for(int i = 0; i < number; ++i){    
-            int num =  randint(gen);
-            v.push_back(num);
-        }
-
-        auto start_dp = std::chrono::high_resolution_clock::now();
-        int result_dp = lis_dp(v);
-        auto end_dp = std::chrono::high_resolution_clock::now();
-
-        auto duration_dp = std::chrono::duration_cast<std::chrono::nanoseconds>(end_dp - start_dp);
-        std::cout << "Time taken by dynamic programming approach: " << duration_dp.count() << " nanoseconds" << std::endl;
+    std::vector<int> v1;
+    for(int i = 0; i < number; ++i){    
+        int num =  randint(gen);
+        v1.push_back(num);
     }
+    std::vector<int> v2 = v1;
+
+    auto start_recursive = std::chrono::high_resolution_clock::now();
+    int result_recursive = lis_recursive(v1, v1.size());
+    auto end_recursive = std::chrono::high_resolution_clock::now();
+
+    auto duration_recursive = std::chrono::duration_cast<std::chrono::nanoseconds>(end_recursive - start_recursive);
+    std::cout << "Time taken by recursive approach: " << duration_recursive.count() << " nanoseconds" << std::endl;
+
+    auto start_dp = std::chrono::high_resolution_clock::now();
+    int result_dp = lis_dp(v2);
+    auto end_dp = std::chrono::high_resolution_clock::now();
+
+    auto duration_dp = std::chrono::duration_cast<std::chrono::nanoseconds>(end_dp - start_dp);
+    std::cout << "Time taken by dynamic programming approach: " << duration_dp.count() << " nanoseconds" << std::endl;
 
     return 0;
 }
